@@ -6,11 +6,19 @@ function price(int $pri)
        $end = substr($pri, -3);
        $first = substr($pri, 0, 1);
        return $first.','.$end;
-   } elseif ($len == 5) {
-    $end = substr($pri, -3);
-    $first = substr($pri, 0, 2);
-    return $first.','.$end;
-    } elseif ($len == 6) {
+   }elseif ($len == 3 ) {
+    return $pri;
+    }elseif ($len == 2 ) {
+        return $pri;
+    }elseif ($len == 1 ) {
+        return $pri;
+    } 
+    elseif ($len == 5) {
+        $end = substr($pri, -3);
+        $first = substr($pri, 0, 2);
+        return $first.','.$end;
+        }
+    elseif ($len == 6) {
         $end = substr($pri, -3);
         $first = substr($pri, 0, 3);
         return $first.','.$end;
