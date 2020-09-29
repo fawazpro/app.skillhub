@@ -4,15 +4,23 @@ namespace App\Controllers;
 
 class Pages extends BaseController
 {
+    public $SHARED = 18000;
+    public $SHAREDL1 = 50;
+    public $SHAREDL2 = 2000;
+    public $SHAREDL3 = 4000;
+    public $SHAREDL4 = 1250;
+    public $SHAREDL5 = 1250;
     public function index()
     {
         $session = session();
         if ($session->logged_in == TRUE) {
             $session = session();
             $id = $session->id;
-            $users = new \App\Models\Users();
-            $db_data = $users->where('id', $id)->find()[0];
+            $users = new \App\Models\Customers();
+            $db_data = $users->where('user_id', $id)->find()[0];
+            
             echo view('user/header');
+            // echo view('user/home');
             echo view('user/home', $db_data);
             echo view('user/footer');
         } else {
@@ -40,15 +48,17 @@ class Pages extends BaseController
 
     public function postregister()
     {
-        $users = new \App\Models\Users();
+        $users = new \App\Models\Customers();
         $incoming = $this->request->getPost();
         $ref_id = $incoming['ref'];
+        $user_id = 'SH'.substr(uniqid(), -5) ;
         $ref_confirm = $users->where('user_id', $ref_id)->find();
 
         if (!empty($ref_confirm)) {
             $data = [
-                'f_name' => $incoming['fname'],
-                'l_name' => $incoming['lname'],
+                'user_id' => $user_id,
+                'fname' => $incoming['fname'],
+                'lname' => $incoming['lname'],
                 'email' => $incoming['email'],
                 'phone' => $incoming['phone'],
                 'sex' => $incoming['sex'],
@@ -56,10 +66,15 @@ class Pages extends BaseController
                 'paid' => 0,
                 'ref_id' => $ref_id,
                 'password' => hash('sha1', $incoming['pass'], false),
+                'ref1' => $ref_id,
+                'ref2' => $ref_confirm[0]['ref1'],
+                'ref3' => $ref_confirm[0]['ref2'],
+                'ref4' => $ref_confirm[0]['ref3'],
+                'ref5' => $ref_confirm[0]['ref4'],
             ];
 
-            if ($id = $users->save($data)) {
-                $this->makePayment($id);
+            if (null !== ($users->insert($data))) {
+                $this->makePayment($user_id);
             } else {
                 echo 'Not Successful';
             }
@@ -70,7 +85,7 @@ class Pages extends BaseController
 
     public function postlogin()
     {
-        $users = new \App\Models\Users();
+        $users = new \App\Models\Customers();
         $incoming = $this->request->getPost();
         $data = [
             'email' => $incoming['email'],
@@ -80,8 +95,8 @@ class Pages extends BaseController
         if ($result) {
             if ($result[0]['paid']) {
                 $ses_data = [
-                    'id' => $result[0]['id'],
-                    'f_name' => $result[0]['f_name'],
+                    'id' => $result[0]['user_id'],
+                    'f_name' => $result[0]['fname'],
                     'email' => $result[0]['email'],
                     'paid' => $result[0]['paid'],
                     'logged_in' => TRUE,
@@ -90,7 +105,7 @@ class Pages extends BaseController
                 $session->set($ses_data);
                 $this->index();
             } else {
-                $this->makePayment($result[0]['id']);
+                $this->makePayment($result[0]['user_id']);
             }
         } else {
             echo 'Login not Successful';
@@ -98,21 +113,66 @@ class Pages extends BaseController
     }
 
 
+    // public function processpay()
+    // {
+    //     $users = new \App\Models\Users();
+    //     $incoming = $this->request->getGet();
+    //     $user_id = substr(uniqid('SH'), -5) ;
+    //     $data = [
+    //         'paid' => 1,
+    //         'user_id' => $user_id
+    //     ];
+        
+    //     $id = $incoming['sku'];
+    //     $users->update($id, $data);
+    //     echo ('Handing over to P1');
+    //     $this->pivotal1($id);
+    //     $this->index();
+    // }
+    public function redir()
+    {
+        echo view('user/authheader');
+        echo view('user/redirect');
+    }
+
     public function processpay()
     {
-        $users = new \App\Models\Users();
+        $users = new \App\Models\Customers();
         $incoming = $this->request->getGet();
-        $user_id = substr(uniqid('SH'), -5) ;
         $data = [
             'paid' => 1,
-            'user_id' => $user_id
         ];
         
         $id = $incoming['sku'];
         $users->update($id, $data);
-        echo ('Handing over to P1');
-        $this->pivotal1($id);
-        $this->index();
+        echo ('Handing over to credit');
+        $this->credit($id);
+        $this->redir();
+    }
+
+    private function credit($id){
+        $users = new \App\Models\Customers();
+        $p_db_data = $users->where('user_id', $id)->find()[0];
+        $ref1 = $p_db_data['ref1'];
+        $ref2 = $p_db_data['ref2'] ? $p_db_data['ref2'] : 'alpha';
+        $ref3 = $p_db_data['ref3'] ? $p_db_data['ref3'] : 'alpha';
+        $ref4 = $p_db_data['ref4'] ? $p_db_data['ref4'] : 'alpha';
+        $ref5 = $p_db_data['ref5'] ? $p_db_data['ref5'] : 'alpha';
+        
+        $this->addtowallet($ref1, $this->SHAREDL1);
+        $this->addtowallet($ref2, $this->SHAREDL2);
+        $this->addtowallet($ref3, $this->SHAREDL3);
+        $this->addtowallet($ref4, $this->SHAREDL4);
+        $this->addtowallet($ref5, $this->SHAREDL5);
+        return;
+    }
+
+    private function addtowallet($id, $amt){
+        $users = new \App\Models\Customers();
+        $db_data = $users->where('user_id', $id)->find()[0];
+        $wallet = $db_data['wallet'] + $amt;
+        $users->update($id, ['wallet' => $wallet]);
+        return;
     }
 
     private function pivotal1(int $id)

@@ -3,6 +3,18 @@ MasterTerry/
 
 #-------------------------
 # Operating Specific Junk Files
+<?php var_dump(downlines($d_lines)); foreach (downlines($d_lines) as $key => $dline): ?>
+                        <!-- <div class="card-body mb-1">
+                            <div class="media">
+                                <figure class="icons icon-40 mr-2 bg-light-warning">
+                                    <i class="material-icons">account-o</i>
+                                </figure>
+                                <div class="media-body">
+                                    <h6 class="mb-1"> <a href="">SkillHubber </a> </h6>
+                                </div>
+                            </div>
+                        </div> -->
+                        <?php endforeach; ?>
 #-------------------------
 
 # OS X

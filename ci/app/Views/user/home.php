@@ -44,22 +44,14 @@ function downlines($dlines){
                             <div class="row mb-2">
                                 <div class="col">
                                     <p>Wallet</p>
-                                    <h1>&#x20a6;<?= price($p_wallet + $c_wallet)?></h1>
+                                    <h1>&#x20a6;<?= price($wallet)?></h1>
                                 </div>
                                 <div class="col"></div>
-                                <div class="col">
-                                    <p>Product Wallet</p>
-                                    <h3>&#x20a6;<?=  price($p_wallet) ?></h3>
-                                </div>
-                                <div class="col">
-                                    <p>Cash Wallet</p>
-                                    <h3>&#x20a6;<?=price($c_wallet)?></h3>
-                                </div>
                             </div>
                             <div class="progress bg-light-primary h-5 mb-2">
                                 <div class="progress-bar bg-white" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
                             </div>
-                            <p><span class="text-mute"><?=$user_id ?> </span> <span class="float-right">Upgrade Wallet: <?=$upgrade_wallet ?></span></p>
+                            <p><span class="text-mute"><?=$user_id ?> </span> <span class="float-right">Upgrade Wallet: </span></p>
                         </div>
                     </div>
                 </div>
@@ -112,18 +104,7 @@ function downlines($dlines){
                 <div class="container">
                     <h6 class="page-subtitle">My Downlines</h6>
                     <div class="card shadow-sm border-0 mb-4">
-                        <?php var_dump(downlines($d_lines)); foreach (downlines($d_lines) as $key => $dline): ?>
-                        <div class="card-body mb-1">
-                            <div class="media">
-                                <figure class="icons icon-40 mr-2 bg-light-warning">
-                                    <i class="material-icons">account-o</i>
-                                </figure>
-                                <div class="media-body">
-                                    <h6 class="mb-1"> <a href="">SkillHubber </a> </h6>
-                                </div>
-                            </div>
-                        </div>
-                        <?php endforeach; ?>
+                        
                         <div class="card-body border-top">
                             <div class="media">
                                 <figure class="icons icon-40 mr-2 bg-light-danger">
