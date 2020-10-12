@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
-    <meta name="author" content="Maxartkiller">
+    <meta name="author" content="RayyanTech">
 
     <title></title>
 
@@ -71,12 +71,21 @@
                 </button>
             </div>
             <div>
-                <a class="navbar-brand" href="index.html">
+                <a class="navbar-brand" href="<?= base_url()?>">
                     <div class="logo">S</div>
                     <h4 class="logo-text"><span>SkillHub</span><small>.NG</small></h4>
                 </a>
             </div>
-                <a href="logout" class="btn btn-link p-2"><span class="avatar avatar-30"><i class="material-icons">power_settings_new</i></span></a>
+            <div>
+                <form class="form-inline search">
+                    <input class="form-control w-100" type="text" placeholder="Search..." aria-label="Search">
+                    <button class="btn btn-link btn-44" type="submit"><span class="icon_search"></span></button>
+                </form>
+                <button class="btn btn-link search-btn" type="button"><span class="icon_search"></span></button>
+                <button class="btn btn-link search-btn" type="button"><span class=""><i class="material-icons">shopping_cart</i></span></button>
+                <a href="profile.html" class="btn btn-link p-2"><span class="avatar avatar-30"><i class="material-icons">account_circle</i></span></a>
+            </div>
+                <!-- <a href="logout" class="btn btn-link p-2"><span class="avatar avatar-30"><i class="material-icons">power_settings_new</i></span></a> -->
             </div>
         </nav>
     </header>

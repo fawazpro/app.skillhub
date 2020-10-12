@@ -35,10 +35,6 @@ function price(int $pri)
                 } 
 }
 
-function downlines($dlines){
-    $d_lines = json_decode($dlines);
-    return $d_lines;
-}
 ?>
     <!-- Begin page content -->
     <main class="flex-shrink-0 main-container pb-0">
@@ -48,68 +44,47 @@ function downlines($dlines){
                 <div class="container mt-4">
                     <div class="card border-0 shadow bg-default text-white">
                         <div class="card-body">
-                            <p class="mb-2">Pivotal 1 <small class="text-mute">Level 2</small></p>
+                            <p class="mb-2">Total Balance: <small class="text-mute">&#x20a6;<?= price($user['p_wallet'] + $user['c_wallet'])?></small></p>
                             <div class="row mb-2">
                                 <div class="col">
-                                    <p>Wallet</p>
-                                    <h1>&#x20a6;<?= price($wallet)?></h1>
+                                    <p>Cash Wallet</p>
+                                    <h1>&#x20a6;<?= price($user['c_wallet'])?></h1>
                                 </div>
                                 <div class="col"></div>
                             </div>
                             <div class="progress bg-light-primary h-5 mb-2">
                                 <div class="progress-bar bg-white" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
                             </div>
-                            <p><span class="text-mute"><?=$user_id ?> </span> <span class="float-right">Upgrade Wallet: </span></p>
+                            <p>ID: <span class="text-mute"><?=$user['user_id'] ?> </span> <span class="float-right">Product Wallet: &#x20a6;<?=price($user['p_wallet']) ?></span></p>
                         </div>
                     </div>
                 </div>
                 <div class="container mb-4 px-2">
-                    <h6 class="page-subtitle">Top Products / Services</h6>
+                    <h6 class="page-subtitle">Top Products / Services
+                        <p class="float-right"><a href="market">View all</a></p>
+                    </h6>
+                    
                     <div class="swiper-container swiper-offers">
                         <div class="swiper-wrapper">
+                            <?php foreach ($products as $key => $prod): ?>
                             <div class="swiper-slide w-auto p-2">
                                 <div class="card shadow-sm border-0">
                                     <div class="card-body">
                                         <div class="media">
                                             <div class="media-body">
-                                                <img class="" src="assets/img/businessdomain1.jpg" height="150" alt="">
-                                                <h6 class="mt-2  text-mute">Finance Consultancy</h6>
-                                                <p>&#x20a6;10,000</p>
+                                                <img class="" src="http://localhost/admin.master.terry/public/uploads/skillhubb/originals/<?= $prod['image']?>" height="150" alt="">
+                                                <h6 class="mt-2  text-mute"><?= $prod['name'] ?></h6>
+                                                <p>&#x20a6;<?= price($prod['price']) ?></p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="swiper-slide w-auto p-2">
-                                <div class="card shadow-sm border-0">
-                                    <div class="card-body">
-                                        <div class="media">
-                                            <div class="media-body">
-                                                <img class="" src="assets/img/prods/bag.png" height="150" alt="">
-                                                <h6 class="mt-2  text-mute">Gucci Bag</h6>
-                                                <p>&#x20a6;20,000</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="swiper-slide w-auto p-2">
-                                <div class="card shadow-sm w-250 border-0">
-                                    <div class="card-body">
-                                        <div class="media">
-                                            <div class="media-body">
-                                                <img class="" src="assets/img/businessdomain1.jpg" height="150" alt="">
-                                                <h6 class="mt-2  text-mute">Law Consultancy</h6>
-                                                <p>&#x20a6;10,000</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <?php endforeach; ?>
                         </div>
                     </div>
                 </div>
-                <div class="container">
+                <!-- <div class="container">
                     <h6 class="page-subtitle">My Downlines</h6>
                     <div class="card shadow-sm border-0 mb-4">
                         
@@ -164,7 +139,7 @@ function downlines($dlines){
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
     </main>

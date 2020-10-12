@@ -3,17 +3,17 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class Customers extends Model
+class Products extends Model
 {
-    protected $table      = 'customers';
-    protected $primaryKey = 'user_id';
+    protected $table      = 'products';
+    protected $primaryKey = 'id';
 
     protected $returnType = 'array';
-    protected $useSoftDeletes = true;
+    protected $useSoftDeletes = false;
 
-    protected $allowedFields = ['fname', 'user_id', 'lname', 'email', 'phone', 'sex', 'address', 'password', 'paid', 'ref_id', 'c_wallet','p_wallet'];
+    protected $allowedFields = ['name', 'price', 'p_category', 'category'];
 
-    protected $useTimestamps = true;
+    protected $useTimestamps = false;
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
     protected $deletedField  = 'deleted_at';

@@ -34,6 +34,7 @@ $routes->setAutoRoute(true);
 $routes->get('/about', 'Pages::about');
 $routes->get('/dashboard', 'Pages::index');
 $routes->get('/transactions', 'Pages::transactions');
+$routes->get('/market', 'Pages::market');
 $routes->get('/register', 'Pages::register');
 $routes->post('/register', 'Pages::postregister');
 $routes->get('/login', 'Pages::login');

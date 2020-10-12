@@ -3,15 +3,15 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class Customers extends Model
+class Profit extends Model
 {
-    protected $table      = 'customers';
-    protected $primaryKey = 'user_id';
+    protected $table      = 'profit';
+    protected $primaryKey = 'id';
 
     protected $returnType = 'array';
     protected $useSoftDeletes = true;
 
-    protected $allowedFields = ['fname', 'user_id', 'lname', 'email', 'phone', 'sex', 'address', 'password', 'paid', 'ref_id', 'c_wallet','p_wallet'];
+    protected $allowedFields = ['customer', 'amount'];
 
     protected $useTimestamps = true;
     protected $createdField  = 'created_at';

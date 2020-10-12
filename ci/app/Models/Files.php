@@ -3,17 +3,16 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class Customers extends Model
+class Files extends Model
 {
-    protected $table      = 'customers';
-    protected $primaryKey = 'user_id';
+    protected $table      = 'directus_files';
+    protected $primaryKey = 'id';
 
     protected $returnType = 'array';
-    protected $useSoftDeletes = true;
+    protected $useSoftDeletes = false;
 
-    protected $allowedFields = ['fname', 'user_id', 'lname', 'email', 'phone', 'sex', 'address', 'password', 'paid', 'ref_id', 'c_wallet','p_wallet'];
-
-    protected $useTimestamps = true;
+    protected $allowedFields = [];
+    protected $useTimestamps = false;
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
     protected $deletedField  = 'deleted_at';
