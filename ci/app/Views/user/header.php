@@ -77,13 +77,13 @@
                 </a>
             </div>
             <div>
-                <form class="form-inline search">
-                    <input class="form-control w-100" type="text" placeholder="Search..." aria-label="Search">
+                <form class="form-inline search" action="search" method="get">
+                    <input class="form-control w-100" name="keyword" type="text" placeholder="Search..." aria-label="Search">
                     <button class="btn btn-link btn-44" type="submit"><span class="icon_search"></span></button>
                 </form>
                 <button class="btn btn-link search-btn" type="button"><span class="icon_search"></span></button>
-                <button class="btn btn-link search-btn" type="button"><span class=""><i class="material-icons">shopping_cart</i></span></button>
-                <a href="profile.html" class="btn btn-link p-2"><span class="avatar avatar-30"><i class="material-icons">account_circle</i></span></a>
+                <button class="btn btn-link" data-toggle="modal" data-target="#cart" type="button"><span class=""><i class="material-icons">shopping_cart</i><span class="total-count badge badge-pill badge-danger"></span></span></button>
+                <a href="profile" class="btn btn-link p-2"><span class="avatar avatar-30"><i class="material-icons">account_circle</i></span></a>
             </div>
                 <!-- <a href="logout" class="btn btn-link p-2"><span class="avatar avatar-30"><i class="material-icons">power_settings_new</i></span></a> -->
             </div>
@@ -105,12 +105,38 @@
             </div>
         </div>
         <div class="list-group main-menu my-4">
-            <a href="dashboard" class="list-group-item list-group-item-action active"><i class="material-icons">home</i>Home</a>
-            <a href="transactions" class="list-group-item list-group-item-action"><i class="material-icons">view_day</i>Transactions</a>
-            <a href="connection.html" class="list-group-item list-group-item-action"><i class="material-icons">insert_emoticon</i>Market</a>
+            <a href="dashboard" class="list-group-item list-group-item-action"><i class="material-icons">home</i>Home</a>
+            <a href="market" class="list-group-item list-group-item-action"><i class="material-icons">insert_emoticon</i>Market</a>
+            <a href="transactions" class="list-group-item list-group-item-action"><i class="material-icons">view_day</i>Orders</a>
             <!-- <a href="notification.html" class="list-group-item list-group-item-action"><i class="material-icons">notifications</i>Notification <span class="badge badge-dark text-white">2</span></a> -->
             <!-- <a href="setting.html" class="list-group-item list-group-item-action"><i class="material-icons">account_circle</i>Setting</a> -->
             <a href="about" class="list-group-item list-group-item-action"><i class="material-icons">business</i>About</a>
         </div>
     </div>
     <!-- sidebar ends -->
+    
+    <!--Cart Modal -->
+    <div class="mt-5 modal fade" id="cart" tabindex="-1" role="dialog" aria-labelledby="cartTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable" role="document">
+            <div class="modal-content bg-light">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="cartTitle">Cart (<span class="total-count"></span>)</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body px-1 bg-white">
+                    <!-- <table class="show-cart table"></table> -->
+                    <div class="showCart"></div>
+                    <div class="float-right pr-3">Total price: &#x20a6;<span class="total-cart"></span></div>
+                </div>
+                <div class="modal-footer bg-primary text-white">
+                    <button type="button" class="btn btn-warning" data-dismiss="modal">
+                        Close
+                    </button>
+                    <a href="summary" class="btn btn-danger">CheckOut</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Cart Modal -->

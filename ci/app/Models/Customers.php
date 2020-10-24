@@ -11,7 +11,7 @@ class Customers extends Model
     protected $returnType = 'array';
     protected $useSoftDeletes = true;
 
-    protected $allowedFields = ['fname', 'user_id', 'lname', 'email', 'phone', 'sex', 'address', 'password', 'paid', 'ref_id', 'c_wallet','p_wallet'];
+    protected $allowedFields = ['fname', 'user_id', 'lname', 'email', 'phone', 'sex', 'address', 'password', 'paid','bank','acc_name','acc_num','ref_id', 'c_wallet','p_wallet','clearance','tranx'];
 
     protected $useTimestamps = true;
     protected $createdField  = 'created_at';

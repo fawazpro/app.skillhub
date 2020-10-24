@@ -16,6 +16,7 @@ $(document).ready(function () {
         alert('url')
     }).addClass("active").parent().addClass("active").closest('.nav-item').addClass("active");
 
+    $(".order:first").removeClass("border-top");
 
 });
 

@@ -11,9 +11,9 @@ class Products extends Model
     protected $returnType = 'array';
     protected $useSoftDeletes = false;
 
-    protected $allowedFields = ['name', 'price', 'p_category', 'category'];
+    protected $allowedFields = ['name', 'price', 'p_category', 'category', 'details'];
 
-    protected $useTimestamps = false;
+    protected $useTimestamps = true;
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
     protected $deletedField  = 'deleted_at';

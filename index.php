@@ -16,6 +16,17 @@ define('FCPATH', __DIR__ . DIRECTORY_SEPARATOR);
 $pathsPath = realpath(FCPATH . 'ci/app/Config/Paths.php');
 // ^^^ Change this if you move your application folder
 
+/*---------------------------------------------------------------
+* COMPOSER AUTO-LOADING
+*---------------------------------------------------------------
+*
+* Using this method, you don't need to set $config['composer_autoload']
+* to TRUE in application/config/config.php. Also, all packages installed
+* using Composer will be loaded immediately BEFORE any CodeIgniter classes
+*/
+   require 'vendor/autoload.php';
+
+/*
 /*
  *---------------------------------------------------------------
  * BOOTSTRAP THE APPLICATION

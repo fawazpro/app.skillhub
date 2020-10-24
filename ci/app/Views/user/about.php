@@ -1,6 +1,11 @@
     <!-- Begin page content -->
     <main class="flex-shrink-0 main-container">
-        <!-- page content goes here -->
+        <div class="row">
+            <div class="col my-5 py-5">
+               <p class="text-center display-1 my-5 py-5">🤔...</p> 
+            </div>
+        </div>
+        <!-- page content goes here 
         <div class="section-100 bg-white">
             <div class="container h-100">
                 <div class="row h-100 justify-content-center text-center">
@@ -237,4 +242,4 @@
             </div>
         </div>
     </main>
-    <!-- End of page content -->
+     End of page content -->

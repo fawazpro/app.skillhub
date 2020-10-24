@@ -62,5 +62,7 @@ class Autoload extends AutoloadConfig
 	 *
 	 * @var array
 	 */
-	public $classmap = [];
+	public $classmap = [
+		'composer' => ROOTPATH.'vendor/autoload.php',
+	];
 }

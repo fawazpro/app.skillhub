@@ -48,9 +48,8 @@ function price(int $pri)
                             <div class="row mb-2">
                                 <div class="col">
                                     <p>Cash Wallet</p>
-                                    <h1>&#x20a6;<?= price($user['c_wallet'])?></h1>
+                                    <h1>&#x20a6;<?= price($user['c_wallet'])?> <span class="float-right"> <a href="" class="text-white" data-toggle="modal" data-target="#withdraw"><i class="material-icons h1">send</i></a></span></h1>
                                 </div>
-                                <div class="col"></div>
                             </div>
                             <div class="progress bg-light-primary h-5 mb-2">
                                 <div class="progress-bar bg-white" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
@@ -72,9 +71,12 @@ function price(int $pri)
                                     <div class="card-body">
                                         <div class="media">
                                             <div class="media-body">
-                                                <img class="" src="http://localhost/admin.master.terry/public/uploads/skillhubb/originals/<?= $prod['image']?>" height="150" alt="">
-                                                <h6 class="mt-2  text-mute"><?= $prod['name'] ?></h6>
-                                                <p>&#x20a6;<?= price($prod['price']) ?></p>
+                                                <a href="details?sku=<?=$prod['id']?>">
+                                                    <img class="" src="<?=$dir_img?><?= $prod['image']?>" height="150" alt="">
+                                                    <h6 class="mt-2  text-mute"><?= $prod['name'] ?></h6>
+                                                </a>
+                                                <p class="float-right">&#x20a6;<?= price($prod['price']) ?></p>
+                                                <a href="#" title="Add to Cart" data-name="<?= $prod['name'] ?>" data-img=<?= $prod['image'] ?> data-price="<?= $prod['price'] ?>" style="font-size: smaller;" class="btn btn-outline-danger add-to-cart">Add to Cart</a>
                                             </div>
                                         </div>
                                     </div>
@@ -84,24 +86,57 @@ function price(int $pri)
                         </div>
                     </div>
                 </div>
-                <!-- <div class="container">
-                    <h6 class="page-subtitle">My Downlines</h6>
-                    <div class="card shadow-sm border-0 mb-4">
-                        
-                        <div class="card-body border-top">
-                            <div class="media">
-                                <figure class="icons icon-40 mr-2 bg-light-danger">
-                                    <i class="material-icons">account</i>
-                                </figure>
-                                <div class="media-body">
-                                    <h6 class="mb-1">David Ayo</h6>
-                                    <p class="mb-0 text-mute small">&#x20a6; 32,000</p>
+                <div class="container">
+                    <h6 class="page-subtitle">Orders
+                        <p class="float-right"><a href="transactions">View all</a></p>
+                    </h6>                    <div class="card shadow-sm border-0 mb-4" id="orders">
+                        <?php foreach ($orders  as $key => $order): ?>
+                        <?php if($order['status'] == 'Pending'):  ?>
+                            <div class="card-body border-top order">
+                                <?php foreach (json_decode($order['orders']) as $key => $ord):?>
+                                <div class="media mt-2">
+                                    <figure class="icons icon-40 mr-2 bg-light-warning">
+                                        <i class="material-icons">query_builder</i>
+                                    </figure>
+                                    <div class="media-body">
+                                        <h6 class="mb-1"><?=$ord->name?> <span class="text-danger">x<?=$ord->count?></span> </h6>
+                                        <p class="mb-0 text-mute small">&#x20a6;<?=price($ord->total)?></p>
+                                    </div>
                                 </div>
+                                <?php endforeach; ?>
                             </div>
-                        </div>
+                        <?php elseif ($order['status'] == 'Cancelled'): ?>
+                            <div class="card-body border-top order">
+                                <?php foreach (json_decode($order['orders']) as $key => $ord):?>
+                                <div class="media mt-2">
+                                    <figure class="icons icon-40 mr-2 bg-light-danger">
+                                        <i class="material-icons">cancel</i>
+                                    </figure>
+                                    <div class="media-body">
+                                        <h6 class="mb-1"><?=$ord->name?> <span class="text-danger">x<?=$ord->count?></span> </h6>
+                                        <p class="mb-0 text-mute small">&#x20a6;<?=price($ord->total)?></p>
+                                    </div>
+                                </div>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php elseif ($order['status'] == 'Completed'): ?>
+                            <div class="card-body border-top order">
+                                <?php foreach (json_decode($order['orders']) as $key => $ord):?>
+                                <div class="media mt-2">
+                                    <figure class="icons icon-40 mr-2 bg-light-success">
+                                        <i class="material-icons">check</i>
+                                    </figure>
+                                    <div class="media-body">
+                                        <h6 class="mb-1"><?=$ord->name?> <span class="text-danger">x<?=$ord->count?></span> </h6>
+                                        <p class="mb-0 text-mute small">&#x20a6;<?=price($ord->total)?></p>
+                                    </div>
+                                </div>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif;endforeach; ?>
                     </div>
                 </div>
-                <div class="container">
+                <!-- <div class="container">
                     <h6 class="page-subtitle">Quick Bills</h6>
                     <div class="card shadow-sm border-0 mb-3">
                         <div class="card-body">
@@ -143,4 +178,47 @@ function price(int $pri)
             </div>
         </div>
     </main>
+    <!-- Modal -->
+    <div class="modal fade mt-5" id="withdraw" tabindex="-1" role="dialog" aria-labelledby="withdrawal" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                    <div class="modal-header">
+                            <h5 class="modal-title">Cash Withdrawal</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                        </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="container">
+                            <form method="post" action="withdraw">
+                                <div class="col text-center">
+                                    <label for="inputName" class="col-sm-1-12 col-form-label">Amount: </label>
+                                </div>    
+                                 <div class="form-group col">
+                                    <div class="col-sm-1-12">
+                                        <input type="number" class="form-control" name="amount" placeholder="Amount" max="<?=$user['c_wallet'] ?>">
+                                    </div>
+                                </div>
+                            
+                        </div>
+                        <p class="text-center text-dark-50 h6">Cash Wallet: &#x20a6;<?=price($user['c_wallet']) ?></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Withdraw</button></form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        $('#exampleModal').on('show.bs.modal', event => {
+            var button = $(event.relatedTarget);
+            var modal = $(this);
+            // Use above variables to manipulate the DOM
+            
+        });
+    </script>
     <!-- End of page content -->
