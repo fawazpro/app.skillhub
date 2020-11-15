@@ -11,6 +11,7 @@ class Pages extends BaseController
 {
     public $Bonus = 17000;
     public $Profit = 8000;
+    public $phone = '08106685629';
     public $P_Bonus = 12000;
     public $C_Bonus = 5000;
     public $PRICE = 25000;
@@ -39,7 +40,7 @@ class Pages extends BaseController
             $id = $session->id;
             $users = new \App\Models\Customers();
             $products = new \App\Models\Products();
-            $prods = $products->findAll();
+            $prods = $products->where('promotion','f')->findAll();
             $orders = new \App\Models\Orders();
             $ords = $orders->where(['user_id' => $session->id])->findAll(3);
             foreach ($prods as $key => $value) {
@@ -590,11 +591,33 @@ class Pages extends BaseController
             'email' => $email,
             'status' => 'initiated'
         ];
-        $trans->save($data);
-        var_dump($tranx->data->reference);
-        return $tranx->data->authorization_url;
+        $db_id = $trans->insert($data);
+        // var_dump($tranx->data->reference);
+        // return $tranx->data->authorization_url;
+        return $db_id;
         // redirect to page so User can pay
         // return redirect()->to(base_url());
+    }
+
+    public function processPayment()
+    {
+        $trans = new \App\Models\Tranx();
+        $incoming = $this->request->getGet();
+        $id = $incoming['ref'];
+        $src = $incoming['utm_src'];
+        if ($src == 'rgst') {
+            $u_db = $trans->where('id', $id)->find()[0];
+            $paymenturl = $u_db['url'];
+            $this->makePayment($u_db['user_id'], $paymenturl);
+        }else if ($src == 'lgn') {
+            $u_db = $trans->where('id', $id)->find()[0];
+            $paymenturl = $u_db['url'];
+            $this->makePayment($u_db['user_id'], $paymenturl);
+        } else{
+            $u_db = $trans->where('reference', $id)->find()[0];
+            $paymenturl = $u_db['url'];
+            $this->makePayment($u_db['user_id'], $paymenturl);
+        }
     }
 
     public function postregister()
@@ -622,12 +645,27 @@ class Pages extends BaseController
 
             if (null !== ($users->insert($data))) {
                 $paymenturl = $this->payment($incoming['email'], $user_id);
-                $this->makePayment($user_id, $paymenturl);
+                return redirect()->to(base_url('processpayment?ref='.$paymenturl.'&utm_src=rgst'));
+                // $this->makePayment($user_id, $paymenturl);
             } else {
-                echo 'Not Successful';
+                $data = [
+                    'title'=>'Registeration Failed 💔',
+                    'msg'=> "We are sorry! <br>Your registration was not successfull.
+                     Try going through the details submitted or contact our support team 
+                     using <a href='tel:".$this->phone."'>".$this->phone."</a> ",
+                    'url'=>base_url('register')
+                ];
+                $this->msg($data);
             }
         } else {
-            echo 'Invalid Referrer ID';
+            $data = [
+                'title'=>'Invalid Referrer ID 💔',
+                'msg'=> "We are sorry! <br>The Referer ID you provided is either never
+                assigned to any registered & paid user or it is inputed correctly. <br>
+                 Try going through the ID submitted or use '<i>alpha</i>' to set the company as the referer",
+                'url'=>"javascript:history.back()"
+            ];
+            $this->msg($data);
         }
     }
 
@@ -685,8 +723,10 @@ class Pages extends BaseController
                     $session->set($ses_data);
                     return redirect()->to(base_url());}
                 } else {
-                    $paymenturl = $u_db['url'];
-                    $this->makePayment($result[0]['user_id'], $paymenturl);
+                    $paymenturl = $u_db['id'];
+                    return redirect()->to(base_url('processpayment?ref='.$paymenturl.'&utm_src=lgn'));
+
+                    // $this->makePayment($result[0]['user_id'], $paymenturl);
                 }
             }
         } else {

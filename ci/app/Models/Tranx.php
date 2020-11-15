@@ -5,7 +5,7 @@ use CodeIgniter\Model;
 
 class Tranx extends Model
 {
-    protected $table      = 'Tranx';
+    protected $table      = 'tranx';
     protected $primaryKey = 'id';
 
     protected $returnType = 'array';

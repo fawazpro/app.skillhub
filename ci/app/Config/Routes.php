@@ -53,7 +53,7 @@ $routes->get('/register', 'Pages::register');
 $routes->post('/register', 'Pages::postregister');
 $routes->get('/login', 'Pages::login');
 $routes->get('/logout', 'Pages::logout');
-$routes->get('/pp', 'Pages::processpay');
+$routes->get('/processpayment', 'Pages::processPayment');
 $routes->post('/login', 'Pages::postlogin');
 
 /**
