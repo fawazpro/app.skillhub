@@ -259,7 +259,12 @@ function type($t)
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <?php if ($b_acc):?>
+                <p>You can't withdraw because your bank details is incomplete. <a href="profile">Edit Account</a></p>
+                <button disabled type="submit" class="btn btn-primary">Withdraw</button></form>
+                <?php else: ?>
                 <button type="submit" class="btn btn-primary">Withdraw</button></form>
+                <?php endif; ?>
             </div>
         </div>
     </div>

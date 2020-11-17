@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use AshleyDawson\SimplePagination\Paginator;
+use CodeIgniter\Encryption\Encryption;
 use TeamTNT\TNTSearch\TNTSearch;
 use Yabacon\Paystack;
 
@@ -17,6 +18,7 @@ class Pages extends BaseController
     public $PRICE = 25000;
     private $SK = "sk_test_d5db1e8edf8b693c381771783732f2768540ed06";
     private $PK = 'pk_test_85e0f9981d42e18b5401808ccf490b2b344892ea';
+    public $key = '85e0f9981d42e18b5401808ccf490b2b344892ea';
     private function tntConfig()
     {
         return [
@@ -48,10 +50,11 @@ class Pages extends BaseController
             }
 
             $data = [
-                'user' => $users->where('user_id', $id)->find()[0],
+                'user' => $u_db = $users->where('user_id', $id)->find()[0],
                 'products' => $prods,
                 'dir_img' => getenv('directus'),
                 'orders' => $ords,
+                'b_acc' => empty($u_db['bank']),
             ];
 
             echo view('user/header');
@@ -739,6 +742,57 @@ class Pages extends BaseController
         }
     }
 
+    public function passreset()
+    {
+        $config = new \Config\Encryption();
+        $config->key = $this->key;
+        $encryter = \Config\Services::encrypter($config);
+        $users = new \App\Models\Customers();
+        $email = $this->request->getPost()['email'];
+        $u_db = $users->where('email',$email)->find()[0];
+        $res = $users->update($u_db['user_id'], ['password'=>'']);
+        $encrypted = urlencode($encryter->encrypt($u_db['email'].'\t\n'.$u_db['address'])) ;
+        if($res){
+            $url = base_url('rst?user=').$encrypted;
+            //Email the unique link to user email
+            echo $url;
+        }
+    }
+
+    public function rst()
+    {
+        $details = $this->request->getGet()['user'];
+        $data = [
+            'email'=> urlencode($details),
+        ];
+
+        echo view('user/authheader');
+        echo view('user/reset',$data);
+    }
+
+    public function passwordreset()
+    {
+        $config = new \Config\Encryption();
+        $config->key = $this->key;
+        $encryter = \Config\Services::encrypter($config);
+        $users = new \App\Models\Customers();
+        $incoming = $this->request->getPost();
+        $loader = urldecode($incoming['loader']);
+        $email = strtok($encryter->decrypt($loader),'\t\n');
+        $password = hash('sha1', $incoming['password'], false);
+        $u_db = $users->where('email',$email)->find()[0];
+        $res = $users->update($u_db['user_id'], ['password'=> $password]);
+
+        if($res){
+            $data = [
+                'title'=>'Password Reset',
+                'msg'=>'Your password reset was successfull',
+                'url'=> base_url('login'),
+            ];
+            $this->msg($data);
+        }
+    }
+
     public function msg($data)
     {
         echo view('user/authheader');
@@ -790,6 +844,7 @@ class Pages extends BaseController
             $user = $users->where(['user_id' => $session->id])->find()[0];
 
             $data = [
+                'init' => strtoupper(substr($user['fname'],0,1).substr($user['lname'],0,1)),
                 'user' => $user,
                 'banks' => [
                     array('id' => '1', 'name' => 'Access Bank', 'code' => '044'),

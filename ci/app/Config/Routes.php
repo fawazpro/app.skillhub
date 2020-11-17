@@ -55,6 +55,10 @@ $routes->get('/login', 'Pages::login');
 $routes->get('/logout', 'Pages::logout');
 $routes->get('/processpayment', 'Pages::processPayment');
 $routes->post('/login', 'Pages::postlogin');
+$routes->post('/rst', 'Pages::passreset');
+$routes->post('/rstpassword', 'Pages::passreset');
+$routes->post('/resetpassword', 'Pages::passwordreset');
+$routes->get('/rst', 'Pages::rst');
 
 /**
  * --------------------------------------------------------------------
