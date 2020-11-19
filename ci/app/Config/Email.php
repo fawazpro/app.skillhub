@@ -26,14 +26,14 @@ class Email extends BaseConfig
 	 *
 	 * @var string
 	 */
-	public $userAgent = 'CodeIgniter';
+	public $userAgent = 'RayyanMailer';
 
 	/**
 	 * The mail sending protocol: mail, sendmail, smtp
 	 *
 	 * @var string
 	 */
-	public $protocol = 'mail';
+	public $protocol = 'smtp';
 
 	/**
 	 * The server path to Sendmail.
@@ -68,7 +68,7 @@ class Email extends BaseConfig
 	 *
 	 * @var integer
 	 */
-	public $SMTPPort = 25;
+	public $SMTPPort;
 
 	/**
 	 * SMTP Timeout (in seconds)
@@ -167,5 +167,12 @@ class Email extends BaseConfig
 	 * @var boolean
 	 */
 	public $DSN = false;
+
+	public function __construct() {
+		$this->SMTPHost  = getenv('smtphost');
+		$this->SMTPUser  = getenv('smtpuser');
+		$this->SMTPPass  = getenv('smtppass');
+		$this->SMTPPort  = getenv('smtpport');
+	}
 
 }

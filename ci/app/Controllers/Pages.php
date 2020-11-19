@@ -42,7 +42,7 @@ class Pages extends BaseController
             $id = $session->id;
             $users = new \App\Models\Customers();
             $products = new \App\Models\Products();
-            $prods = $products->where('promotion','f')->findAll();
+            $prods = $products->where('promotion', 'f')->findAll();
             $orders = new \App\Models\Orders();
             $ords = $orders->where(['user_id' => $session->id])->findAll(3);
             foreach ($prods as $key => $value) {
@@ -341,7 +341,7 @@ class Pages extends BaseController
             echo view('user/footer');
         } else if ($session->logged_in == TRUE) {
             $orders = new \App\Models\Orders();
-            $ords = $orders->where('user_id',$session->id)->findAll(3);
+            $ords = $orders->where('user_id', $session->id)->findAll(3);
             var_dump($ords);
             $data = [
                 'orders' => $ords,
@@ -612,11 +612,11 @@ class Pages extends BaseController
             $u_db = $trans->where('id', $id)->find()[0];
             $paymenturl = $u_db['url'];
             $this->makePayment($u_db['user_id'], $paymenturl);
-        }else if ($src == 'lgn') {
+        } else if ($src == 'lgn') {
             $u_db = $trans->where('id', $id)->find()[0];
             $paymenturl = $u_db['url'];
             $this->makePayment($u_db['user_id'], $paymenturl);
-        } else{
+        } else {
             $u_db = $trans->where('reference', $id)->find()[0];
             $paymenturl = $u_db['url'];
             $this->makePayment($u_db['user_id'], $paymenturl);
@@ -648,25 +648,25 @@ class Pages extends BaseController
 
             if (null !== ($users->insert($data))) {
                 $paymenturl = $this->payment($incoming['email'], $user_id);
-                return redirect()->to(base_url('processpayment?ref='.$paymenturl.'&utm_src=rgst'));
+                return redirect()->to(base_url('processpayment?ref=' . $paymenturl . '&utm_src=rgst'));
                 // $this->makePayment($user_id, $paymenturl);
             } else {
                 $data = [
-                    'title'=>'Registeration Failed 💔',
-                    'msg'=> "We are sorry! <br>Your registration was not successfull.
+                    'title' => 'Registeration Failed 💔',
+                    'msg' => "We are sorry! <br>Your registration was not successfull.
                      Try going through the details submitted or contact our support team 
-                     using <a href='tel:".$this->phone."'>".$this->phone."</a> ",
-                    'url'=>base_url('register')
+                     using <a href='tel:" . $this->phone . "'>" . $this->phone . "</a> ",
+                    'url' => base_url('register')
                 ];
                 $this->msg($data);
             }
         } else {
             $data = [
-                'title'=>'Invalid Referrer ID 💔',
-                'msg'=> "We are sorry! <br>The Referer ID you provided is either never
+                'title' => 'Invalid Referrer ID 💔',
+                'msg' => "We are sorry! <br>The Referer ID you provided is either never
                 assigned to any registered & paid user or it is inputed correctly. <br>
                  Try going through the ID submitted or use '<i>alpha</i>' to set the company as the referer",
-                'url'=>"javascript:history.back()"
+                'url' => "javascript:history.back()"
             ];
             $this->msg($data);
         }
@@ -713,33 +713,49 @@ class Pages extends BaseController
             } else {
                 $u_db = $trans->where('user_id', $result[0]['user_id'])->find()[0];
                 if ($this->verifyPayment($u_db['reference'], $u_db['id'])) {
-                    if($this->processpay($result[0]['user_id'])){
-                    $ses_data = [
-                        'id' => $result[0]['user_id'],
-                        'f_name' => $result[0]['fname'],
-                        'email' => $result[0]['email'],
-                        'paid' => 1,
-                        'p_wallet' => $result[0]['p_wallet'],
-                        'logged_in' => TRUE,
-                    ];
-                    $session = session();
-                    $session->set($ses_data);
-                    return redirect()->to(base_url());}
+                    if ($this->processpay($result[0]['user_id'])) {
+                        $ses_data = [
+                            'id' => $result[0]['user_id'],
+                            'f_name' => $result[0]['fname'],
+                            'email' => $result[0]['email'],
+                            'paid' => 1,
+                            'p_wallet' => $result[0]['p_wallet'],
+                            'logged_in' => TRUE,
+                        ];
+                        $session = session();
+                        $session->set($ses_data);
+                        return redirect()->to(base_url());
+                    }
                 } else {
                     $paymenturl = $u_db['id'];
-                    return redirect()->to(base_url('processpayment?ref='.$paymenturl.'&utm_src=lgn'));
+                    return redirect()->to(base_url('processpayment?ref=' . $paymenturl . '&utm_src=lgn'));
 
                     // $this->makePayment($result[0]['user_id'], $paymenturl);
                 }
             }
         } else {
             $data = [
-                'title'=>'Login Failed 💔',
-                'msg'=>'Wrong email or password provided',
-                'url'=>base_url()
+                'title' => 'Login Failed 💔',
+                'msg' => 'Wrong email or password provided',
+                'url' => base_url()
             ];
             $this->msg($data);
         }
+    }
+
+    public function mailer(array $data)
+    {
+        $email = \Config\Services::email();
+        $email->setFrom('account@skilltaps.com', 'Skilltaps Account Manager');
+        $email->setTo($data['to']);
+        // $email->setCC('another@another-example.com');
+        // $email->setBCC('them@their-example.com');
+
+        $email->setSubject($data['subject']);
+        $email->setMessage($data['message']);
+
+        $email->send(false);
+        return $email->printDebugger(['headers','subject','body']);
     }
 
     public function passreset()
@@ -749,13 +765,29 @@ class Pages extends BaseController
         $encryter = \Config\Services::encrypter($config);
         $users = new \App\Models\Customers();
         $email = $this->request->getPost()['email'];
-        $u_db = $users->where('email',$email)->find()[0];
-        $res = $users->update($u_db['user_id'], ['password'=>'']);
-        $encrypted = urlencode($encryter->encrypt($u_db['email'].'\t\n'.$u_db['address'])) ;
-        if($res){
-            $url = base_url('rst?user=').$encrypted;
-            //Email the unique link to user email
-            echo $url;
+        if (!empty($u_db = $users->where('email', $email)->find())) {
+            $u_db = $u_db[0];
+            $res = $users->update($u_db['user_id'], ['password' => '']);
+            $encrypted = urlencode($encryter->encrypt($u_db['email'] . '\t\n' . $u_db['address']));
+            if ($res) {
+                $url = base_url('rst?user=') . $encrypted;
+                // $config = config('Email');
+                // $smtp = $config->SMTPPort;
+                // var_dump($smtp);
+                $data = [
+                    'to' => $email,
+                    'subject' => 'Password Reset Link',
+                    'message' => $url,
+                ];
+                echo $this->mailer($data);
+            }
+        } else {
+            $data = [
+                'title' => 'Incorrect Email',
+                'msg' => 'The email you entered is not registered on this platform',
+                'url' => base_url('login'),
+            ];
+            $this->msg($data);
         }
     }
 
@@ -763,11 +795,11 @@ class Pages extends BaseController
     {
         $details = $this->request->getGet()['user'];
         $data = [
-            'email'=> urlencode($details),
+            'email' => urlencode($details),
         ];
 
         echo view('user/authheader');
-        echo view('user/reset',$data);
+        echo view('user/reset', $data);
     }
 
     public function passwordreset()
@@ -778,16 +810,16 @@ class Pages extends BaseController
         $users = new \App\Models\Customers();
         $incoming = $this->request->getPost();
         $loader = urldecode($incoming['loader']);
-        $email = strtok($encryter->decrypt($loader),'\t\n');
+        $email = strtok($encryter->decrypt($loader), '\t\n');
         $password = hash('sha1', $incoming['password'], false);
-        $u_db = $users->where('email',$email)->find()[0];
-        $res = $users->update($u_db['user_id'], ['password'=> $password]);
+        $u_db = $users->where('email', $email)->find()[0];
+        $res = $users->update($u_db['user_id'], ['password' => $password]);
 
-        if($res){
+        if ($res) {
             $data = [
-                'title'=>'Password Reset',
-                'msg'=>'Your password reset was successfull',
-                'url'=> base_url('login'),
+                'title' => 'Password Reset',
+                'msg' => 'Your password reset was successfull',
+                'url' => base_url('login'),
             ];
             $this->msg($data);
         }
@@ -796,7 +828,7 @@ class Pages extends BaseController
     public function msg($data)
     {
         echo view('user/authheader');
-        echo view('user/redirect',$data);
+        echo view('user/redirect', $data);
     }
 
     public function processpay($id)
@@ -844,7 +876,7 @@ class Pages extends BaseController
             $user = $users->where(['user_id' => $session->id])->find()[0];
 
             $data = [
-                'init' => strtoupper(substr($user['fname'],0,1).substr($user['lname'],0,1)),
+                'init' => strtoupper(substr($user['fname'], 0, 1) . substr($user['lname'], 0, 1)),
                 'user' => $user,
                 'banks' => [
                     array('id' => '1', 'name' => 'Access Bank', 'code' => '044'),
@@ -886,7 +918,7 @@ class Pages extends BaseController
         $session = session();
         if ($session->logged_in == TRUE) {
             $orders = new \App\Models\Orders();
-            $ords = $orders->where('user_id',$session->id)->findAll();
+            $ords = $orders->where('user_id', $session->id)->findAll();
 
             $data = [
                 'orders' => $ords,
@@ -1084,7 +1116,7 @@ class Pages extends BaseController
             $user_wallet = $userdb['c_wallet'];
 
             $incoming = $this->request->getPost();
-            $price = $incoming['amount'] + ($incoming['amount']*0.025);
+            $price = $incoming['amount'] + ($incoming['amount'] * 0.025);
 
             if ($user_wallet > $price) {
                 $user_data = [
