@@ -648,11 +648,23 @@ class Pages extends BaseController
 
             if (null !== ($users->insert($data))) {
                 $paymenturl = $this->payment($incoming['email'], $user_id);
-                return redirect()->to(base_url('processpayment?ref=' . $paymenturl . '&utm_src=rgst'));
-                // $this->makePayment($user_id, $paymenturl);
+                // return redirect()->to(base_url('processpayment?ref=' . $paymenturl . '&utm_src=rgst'));
+                $url = base_url('processpayment?ref=' . $paymenturl . '&utm_src=rgst');
+                $data = [
+                    'to' => $incoming['email'],
+                    'type' => 'link',
+                    'subject' => 'Skilltaps Registration',
+                    'message' => ['url' => $url, 'msg' => 'Your registration on skilltaps.com was successfull. However, you need to proceed to payment to access your dashboard. Kindly use the link below to proceed'],
+                    'response' => [
+                        'title' => 'Registration Successful',
+                        'msg' => 'The next step has been sent to your email',
+                        'url' => base_url('login'),
+                    ]
+                ];
+                $this->mailer($data);
             } else {
                 $data = [
-                    'title' => 'Registeration Failed 💔',
+                    'title' => 'Registration Failed 💔',
                     'msg' => "We are sorry! <br>Your registration was not successfull.
                      Try going through the details submitted or contact our support team 
                      using <a href='tel:" . $this->phone . "'>" . $this->phone . "</a> ",
@@ -743,6 +755,39 @@ class Pages extends BaseController
         }
     }
 
+    public function message($type, $data)
+    {
+        $burl = base_url();
+        // $burl = 'https://app.skilltaps.com/';
+        if ($type == 'link') {
+            $output = "
+            <!DOCTYPE html>
+            <html lang='en'>
+            <head>
+                <meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title></title>
+                <style>
+                    body{margin: 0;padding: 0;}
+                    .container{background-color: aliceblue;border-radius: 1.5rem;text-align: center;}
+                    main{padding-bottom: 4rem;}
+                    footer{padding: 0.4rem 0;background-color: black;color: white;border-bottom-left-radius: 1.5rem;border-bottom-right-radius: 1.5rem;}
+                </style>
+            </head>
+            <body>
+                <div class='container'>
+                    <header class='logo'><img width='50%' src='" . $burl . "assets/img/favicons/skilltaps.png' alt=''></header>
+                    <main>
+                        <h2>" . $data['msg'] . "</h2>
+                        <p><a href='" . $data['url'] . "'>Click here</a> or copy this <br> <code>" . $data['url'] . "</code></p> 
+                    </main>
+                    <footer>&copy; Skilltaps.com</footer>
+                </div>
+            </body>
+            </html>
+        ";
+        }
+        return $output;
+    }
+
     public function mailer(array $data)
     {
         $email = \Config\Services::email();
@@ -752,10 +797,11 @@ class Pages extends BaseController
         // $email->setBCC('them@their-example.com');
 
         $email->setSubject($data['subject']);
-        $email->setMessage($data['message']);
+        $email->setMessage($this->message($data['type'], $data['message']));
 
         $email->send(false);
-        return $email->printDebugger(['headers','subject','body']);
+        $this->msg($data['response']);
+        // return $email->printDebugger(['headers', 'subject', 'body']);
     }
 
     public function passreset()
@@ -771,15 +817,18 @@ class Pages extends BaseController
             $encrypted = urlencode($encryter->encrypt($u_db['email'] . '\t\n' . $u_db['address']));
             if ($res) {
                 $url = base_url('rst?user=') . $encrypted;
-                // $config = config('Email');
-                // $smtp = $config->SMTPPort;
-                // var_dump($smtp);
                 $data = [
                     'to' => $email,
+                    'type' => 'link',
                     'subject' => 'Password Reset Link',
-                    'message' => $url,
+                    'message' => ['url' => $url, 'msg' => 'Your password can be reset using the link below'],
+                    'response' => [
+                        'title' => 'Password Reset',
+                        'msg' => 'A reset link has been sent to the provided email',
+                        'url' => base_url('login'),
+                    ]
                 ];
-                echo $this->mailer($data);
+                $this->mailer($data);
             }
         } else {
             $data = [
@@ -1176,5 +1225,8 @@ class Pages extends BaseController
         return redirect()->to(base_url());
     }
     //--------------------------------------------------------------------
-
+    // Rough
+    // $config = config('Email');
+    // $smtp = $config->SMTPPort;
+    // var_dump($smtp);
 }
