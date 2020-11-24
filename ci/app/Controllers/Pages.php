@@ -1017,7 +1017,35 @@ class Pages extends BaseController
             echo view('user/market', $data);
             echo view('user/footer');
         } else {
-            $this->login();
+            $products = new \App\Models\Products();
+            $prods = $products->findAll();
+            foreach ($prods as $key => $value) {
+                $prods[$key]['image'] = $this->getFile1($prods[$key]['image']);
+            };
+            $paginator = new Paginator();
+            $paginator
+                ->setItemsPerPage(20) // Give us a maximum of 10 items per page
+                ->setPagesInRange(5) // How many pages to display in navigation (e.g. if we have a lot of pages to get through)
+            ;
+            $paginator->setItemTotalCallback(function () use ($prods) {
+                return count($prods);
+            });
+            $paginator->setSliceCallback(function ($offset, $length) use ($prods) {
+                return array_slice($prods, $offset, $length);
+            });
+            $page = $this->page();
+            $pagination = $paginator->paginate((int) $page);
+
+            $data = [
+                'user' => ['p_wallet' => 0,],
+                'dir_img' => getenv('directus'),
+                'pagination' => $pagination,
+                'current' => $pagination->getCurrentPageNumber(),
+                'products' => $prods,
+            ];
+            echo view('user/header');
+            echo view('user/market', $data);
+            echo view('user/footer');
         }
     }
 
