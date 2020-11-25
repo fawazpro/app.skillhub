@@ -16,8 +16,10 @@ class Pages extends BaseController
     public $P_Bonus = 12000;
     public $C_Bonus = 5000;
     public $PRICE = 25000;
-    private $SK = "sk_test_d5db1e8edf8b693c381771783732f2768540ed06";
-    private $PK = 'pk_test_85e0f9981d42e18b5401808ccf490b2b344892ea';
+    // private $SK = "sk_test_d5db1e8edf8b693c381771783732f2768540ed06";
+    private $SK = "sk_live_120523c403f470836f4376602e42810be2dca860";
+    // private $PK = 'pk_test_85e0f9981d42e18b5401808ccf490b2b344892ea';
+    private $PK = "pk_live_fad5b2e553041c06fa662dbad248b4f1787d9583";
     public $key = '85e0f9981d42e18b5401808ccf490b2b344892ea';
     private function tntConfig()
     {
